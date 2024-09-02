@@ -58,10 +58,16 @@ public class PostController {
         return postService.deletePost(id);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping
     public Flux<PostResponse> fetchLatestPosts(@RequestParam int pageNumber,
             @RequestParam int pageSize) {
         Flux<Post> posts = postService.fetchAllRecentPosts(pageNumber, pageSize);
         return posts.map(postApiMapper::mapPostToPostResponse);
+    }
+
+    @GetMapping(path = "/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    public Flux<PostResponse> streamLatestPosts(@RequestParam int pageNumber,
+            @RequestParam int pageSize) {
+        return fetchLatestPosts(pageNumber, pageSize);
     }
 }

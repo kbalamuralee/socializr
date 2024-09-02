@@ -59,6 +59,15 @@ public class PostControllerIntegrationTest {
         int expectedPostPageNumber = 0;
         webTestClient.get()
                 .uri("/posts?pageNumber={n}&pageSize={k}", expectedPostPageNumber, pageSize)
+                .exchange().expectStatus().isOk().expectBodyList(PostResponse.class)
+                .value(responseList -> {
+                    PostResponse response = responseList.get(0);
+                    assertEquals(postId, response.getId());
+                    assertEquals(testUserId, response.getUserId());
+                    assertEquals(updatedTestPostContent, response.getContent());
+                });
+        webTestClient.get()
+                .uri("/posts/stream?pageNumber={n}&pageSize={k}", expectedPostPageNumber, pageSize)
                 .exchange().expectStatus().isOk().expectBody(PostResponse.class).value(response -> {
                     assertEquals(postId, response.getId());
                     assertEquals(testUserId, response.getUserId());
