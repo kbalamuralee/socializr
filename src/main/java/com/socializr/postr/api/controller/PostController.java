@@ -19,6 +19,7 @@ import com.socializr.postr.api.model.PostResponse;
 import com.socializr.postr.api.model.PostUpdateRequest;
 import com.socializr.postr.domain.model.Post;
 import com.socializr.postr.domain.service.PostService;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -33,7 +34,7 @@ public class PostController {
 
     @PostMapping
     public Mono<PostCreationResponse> createPost(
-            @RequestBody PostCreationRequest postCreationRequest) {
+            @RequestBody @Valid PostCreationRequest postCreationRequest) {
         Post postToCreate = postApiMapper.mapPostCreationRequestToPost(postCreationRequest);
         return postService.createPost(postToCreate)
                 .map(postApiMapper::mapPostToPostCreationResponse);
@@ -47,7 +48,7 @@ public class PostController {
 
     @PutMapping("/{id}")
     public Mono<PostResponse> updatePost(@PathVariable UUID id,
-            @RequestBody PostUpdateRequest postUpdateRequest) {
+            @RequestBody @Valid PostUpdateRequest postUpdateRequest) {
         Post postDelta = postApiMapper.mapPostUpdateRequestToPost(id, postUpdateRequest);
         Mono<Post> updatedPost = postService.updatePost(postDelta);
         return updatedPost.map(postApiMapper::mapPostToPostResponse);
